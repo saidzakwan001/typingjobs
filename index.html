@@ -558,80 +558,77 @@
       }
 
       function initFemaleCarousel() {
-        // generate data once
-        carouselData = generateFemaleStories(9);
-        // inject initial cards (duplicate some items for smooth wrap)
-        const track = document.getElementById("carousel-track");
-        if (!track) return;
-        track.innerHTML = "";
+  carouselData = generateFemaleStories(9);
+  const track = document.getElementById("carousel-track");
+  if (!track) return;
+  track.innerHTML = "";
 
-        // To ensure smooth wrapping, we'll render all cards (many) — track flex will handle overflow
-        carouselData.forEach((item) => {
-          track.appendChild(htmlToNode(createCardHTML(item)));
-        });
-        // duplicate again for slider to wrap visually (optional)
-        carouselData.forEach((item) => {
-          track.appendChild(htmlToNode(createCardHTML(item)));
-        });
+  // inject cards twice for looping illusion
+  carouselData.forEach((item) =>
+    track.appendChild(htmlToNode(createCardHTML(item)))
+  );
+  carouselData.forEach((item) =>
+    track.appendChild(htmlToNode(createCardHTML(item)))
+  );
 
-        // autoplay
-        carouselIndex = 0;
-        const cardEl = track.querySelector(".card");
-if (!cardEl) return;
+  const viewport = document.querySelector(".carousel-viewport");
+  const cards = track.querySelectorAll(".card");
+  if (!cards.length) return;
 
-// 👇 We'll use the visible width instead of pure card width
-const viewport = document.querySelector(".carousel-viewport");
-const gap = 16;
-const cardWidth = cardEl.getBoundingClientRect().width + gap;
-const viewportWidth = viewport.offsetWidth;
+  const gap = 16;
+  let index = 0;
 
-// Helper: calculate how far to move so each card aligns flush to left
-function moveToIndex(i) {
-  const totalCards = track.children.length;
-  const visibleCards = Math.floor(viewportWidth / cardWidth);
-  const offset = i * cardWidth;
+  // ensure perfect alignment of cards on screen
+  function getCardWidth() {
+    return cards[0].getBoundingClientRect().width + gap;
+  }
 
-  // ✅ Clamp offset so it never moves too far
-  const maxOffset = (totalCards - visibleCards) * cardWidth;
-  const translate = Math.min(offset, maxOffset);
-  track.style.transform = `translateX(-${translate}px)`;
-}
-        
-        // start auto advance
-        if (carouselTimer) clearInterval(carouselTimer);
-        carouselTimer = setInterval(() => {
-          carouselIndex++;
-          // wrap: when index reaches original length, reset quickly so duplicated cards create loop illusion
-          const maxIndex = carouselData.length;
-          if (carouselIndex > maxIndex) {
-            // jump back to start without animation
-            track.style.transition = "none";
-            carouselIndex = 0;
-            moveToIndex(carouselIndex);
-            // force reflow then enable transition back
-            // eslint-disable-next-line no-unused-expressions
-            track.offsetHeight;
-            track.style.transition =
-              "transform 600ms cubic-bezier(0.22, 1, 0.36, 1)";
-            carouselIndex++;
-            moveToIndex(carouselIndex);
-          } else {
-            moveToIndex(carouselIndex);
-          }
-        }, 2500);
+  function moveToIndex(i, smooth = true) {
+    const cardWidth = getCardWidth();
+    const totalCards = cards.length;
+    const viewportWidth = viewport.offsetWidth;
+    const visibleCards = Math.max(
+      1,
+      Math.floor(viewportWidth / cardWidth)
+    );
 
-        // resize handler to recalc cardWidth
-        let resizeTimer;
-        window.addEventListener("resize", () => {
-          clearTimeout(resizeTimer);
-          resizeTimer = setTimeout(() => {
-            // recalc and move to current index to keep alignment
-            const cw =
-              track.querySelector(".card").getBoundingClientRect().width + gap;
-            track.style.transform = `translateX(-${carouselIndex * cw}px)`;
-          }, 150);
-        });
+    // Clamp to max scroll range so cards never disappear
+    const maxOffset = (totalCards - visibleCards) * cardWidth;
+    const offset = Math.min(i * cardWidth, maxOffset);
+
+    track.style.transition = smooth
+      ? "transform 600ms cubic-bezier(0.22,1,0.36,1)"
+      : "none";
+    track.style.transform = `translateX(-${offset}px)`;
+  }
+
+  // autoplay logic
+  function startCarousel() {
+    clearInterval(carouselTimer);
+    carouselTimer = setInterval(() => {
+      index++;
+      const total = carouselData.length;
+      if (index > total) {
+        // Jump back to start seamlessly
+        moveToIndex(0, false);
+        index = 1;
+        setTimeout(() => moveToIndex(index), 20);
+      } else {
+        moveToIndex(index);
       }
+    }, 2500);
+  }
+
+  // Responsive recalculation on resize
+  let resizeTimeout;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => moveToIndex(index, false), 200);
+  });
+
+  moveToIndex(index, false);
+  startCarousel();
+}
 
       /* ---------------------------
          END FEMALE CAROUSEL
@@ -685,5 +682,6 @@ function moveToIndex(i) {
     </script>
   </body>
 </html>
+
 
 
