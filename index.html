@@ -180,27 +180,31 @@
           "Isha V.",
           "Poonam D.",
         ];
-        const companies = [
-          "QuickType",
-          "DataHive",
-          "TypeWorks",
-          "InstaDocs",
-          "VerbaLabs",
-          "FastKeys",
-          "TextFlow",
+
+        const customAvatars = [
+          // 👇 Add your custom image URLs here
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6ypr9SCH6Cw7eg8k6P2oYDyiftVQ2rl820A&s",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYkvOTJzCBKlkjKDjuYDo0Qh5Rnp0G_QAbYQ&s",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1jIw_nSd6I4ur8vadcc5fMb0GZ5yZ7VIkPw&s",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV-fdggMW-p4wSGb-8V3zXNjKwObuo0FreqA&s",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPeyDRx6zTsk9DtNIY3KWoZ8c3MFZgpCxqWA&s",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvJ0dj9m43hH-kL2Lwi1Unfwmw1phzV2_jng&s",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2Pqed4KWv0KmJiuejIjDNNQxcBF6ectR4KA&s",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-D1T7Ei48OxQF677jbSPEwa5LMx0bySnKtQ&s",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwPqKf_nf-ZGds89glVqoStkxRX_yzWdQ8pg&s",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToB8emygTlNFIWk1QVgBVJ-LRxdSdfALNC1A&s",
         ];
+
         const stories = [];
+
         for (let i = 0; i < n; i++) {
           const name = names[i % names.length];
-          const company = companies[i % companies.length];
           const earning = randomEarning();
-
-          // ✅ female-only avatars
-          const avatarIndex = 1 + (i % 90); // randomuser has women/0–99
-          const avatar = `https://randomuser.me/api/portraits/women/${avatarIndex}.jpg`;
-
+          // automatically loop through the custom avatars
+          const avatar = customAvatars[i % customAvatars.length];
           stories.push({ name, earning, avatar });
         }
+
         return stories;
       }
 
