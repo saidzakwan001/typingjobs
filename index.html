@@ -60,27 +60,41 @@
         outline-offset: 3px;
       }
 
-      /* ----- Carousel styles ----- */
-      .carousel-viewport {
-        overflow: hidden;
-        position: relative;
-      }
-      .carousel-track {
-        display: flex;
-        gap: 1rem;
-        transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
-        will-change: transform;
-      }
-      .card {
-        min-width: 240px;
-        max-width: 320px;
-        flex: 0 0 80%;
-      }
-      @media (min-width: 768px) {
-        .card {
-          flex: 0 0 calc(33.333% - 0.66rem);
-        }
-      }
+      /* ----- Carousel styles (mobile fixed) ----- */
+.carousel-viewport {
+  overflow-x: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 1rem;
+  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  padding: 0 0.75rem; /* ✅ gives breathing room on mobile edges */
+}
+
+.card {
+  flex: 0 0 85%;
+  max-width: 85%;
+  min-width: 240px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .card {
+    flex: 0 0 60%;
+    max-width: 60%;
+  }
+}
+
+@media (min-width: 768px) {
+  .card {
+    flex: 0 0 calc(33.333% - 0.66rem);
+    max-width: calc(33.333% - 0.66rem);
+  }
+}
 
       /* small decorative image grid */
       .img-grid img {
@@ -261,27 +275,51 @@
         </nav>
       </header>
 
-      <!-- hero -->
-      <section class="relative">
-        <div class="h-[68vh] sm:h-[74vh] bg-cover bg-center hero-overlay" style="background-image:url('https://img.freepik.com/free-photo/side-view-man-typing-laptop-keypad-with-cup-coffee-desk_23-2147955397.jpg?semt=ais_hybrid&w=740&q=80')">
-         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent backdrop-blur-[1px]"></div>
-          <div class="relative max-w-6xl mx-auto px-6 h-full flex items-center">
-            <div class="w-full md:w-2/3 lg:w-1/2 text-white">
-              <p class="inline-block text-sm uppercase tracking-wider bg-white/10 px-3 py-1 rounded-full">Work from home • Typing jobs</p>
-              <h1 class="mt-6 text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight">Start Today & Earn Money From Home</h1>
-              <p class="mt-4 text-lg sm:text-xl max-w-xl">Simple typing tasks • No experience required • Flexible hours • Get your first payout quickly — chat with the team on Telegram to begin.</p>
+     <!-- hero -->
+<section class="relative">
+  <div
+    class="min-h-[80vh] sm:min-h-[74vh] bg-cover bg-center md:bg-[center_top] hero-overlay flex items-center"
+    style="background-image:url('https://img.freepik.com/free-photo/side-view-man-typing-laptop-keypad-with-cup-coffee-desk_23-2147955397.jpg?semt=ais_hybrid&w=740&q=80')"
+  >
+    <!-- dark overlay for contrast -->
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent backdrop-blur-[1px]"></div>
 
-              <div class="mt-6 flex flex-wrap gap-3">
-                <a href="${TELEGRAM_LINK}" target="_blank" class="inline-flex items-center gap-3 bg-gradient-to-r from-sky-500 to-emerald-400 text-white px-5 py-3 rounded-2xl font-semibold shadow">💬 Chat on Telegram</a>
-                <a href="${TELEGRAM_LINK}" target="_blank" class="inline-flex items-center gap-2 border border-white/40 text-white px-4 py-3 rounded-2xl font-medium">⚡ Start Now</a>
-                <a href="${TELEGRAM_LINK}" target="_blank" class="inline-flex items-center gap-2 bg-white/10 text-white px-4 py-3 rounded-2xl font-medium">📋 Apply Instantly</a>
-              </div>
+    <!-- content -->
+    <div class="relative z-10 max-w-6xl mx-auto px-6 py-16 md:py-0">
+      <div class="text-white max-w-2xl">
+        <p class="inline-block text-xs sm:text-sm uppercase tracking-wider bg-white/10 px-3 py-1 rounded-full">
+          Work from home • Typing jobs
+        </p>
 
-              <p class="mt-4 text-sm text-white/80">Trusted by thousands across India • <strong>5,000+ people started this week</strong></p>
-            </div>
-          </div>
+        <h1 class="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
+          Start Today & Earn Money From Home
+        </h1>
+
+        <p class="mt-3 text-base sm:text-lg max-w-md sm:max-w-xl">
+          Simple typing tasks • No experience required • Flexible hours • Get your first payout quickly — chat with the team on Telegram to begin.
+        </p>
+
+        <div class="mt-6 flex flex-col sm:flex-row sm:flex-wrap gap-3">
+          <a href="${TELEGRAM_LINK}" target="_blank"
+            class="inline-flex items-center justify-center gap-3 bg-gradient-to-r from-sky-500 to-emerald-400 text-white px-5 py-3 rounded-2xl font-semibold shadow hover:scale-[1.03] transition-transform"
+          >💬 Chat on Telegram</a>
+
+          <a href="${TELEGRAM_LINK}" target="_blank"
+            class="inline-flex items-center justify-center gap-2 border border-white/40 text-white px-4 py-3 rounded-2xl font-medium hover:bg-white/10 transition"
+          >⚡ Start Now</a>
+
+          <a href="${TELEGRAM_LINK}" target="_blank"
+            class="inline-flex items-center justify-center gap-2 bg-white/10 text-white px-4 py-3 rounded-2xl font-medium hover:bg-white/20 transition"
+          >📋 Apply Instantly</a>
         </div>
-      </section>
+
+        <p class="mt-4 text-xs sm:text-sm text-white/80">
+          Trusted by thousands across India • <strong>5,000+ people started this week</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
 
       <!-- benefits -->
       <section class="max-w-6xl mx-auto px-6 py-10">
@@ -541,7 +579,8 @@
         const cardEl = track.querySelector(".card");
         if (!cardEl) return;
         const gap = 16; // px gap is 1rem default in CSS; using dynamic transform only
-        const cardWidth = cardEl.getBoundingClientRect().width + gap;
+        const viewport = document.querySelector(".carousel-viewport");
+const cardWidth = Math.min(cardEl.getBoundingClientRect().width + gap, viewport.offsetWidth * 0.9);
 
         // function to move track
         function moveToIndex(i) {
@@ -636,3 +675,4 @@
     </script>
   </body>
 </html>
+
