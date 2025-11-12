@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Work From Home Typing Jobs | Start Today & Earn</title>
+    <meta
+      name="description"
+      content="Start today & earn money from home. Simple typing tasks — no experience needed. Chat on Telegram to get started."
+    />
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      html,
+      body {
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Poppins", Inter, sans-serif;
+      }
+      /* simple subtle reveal */
+      .reveal {
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity 0.45s ease, transform 0.45s ease;
+      }
+      .reveal.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      /* fixed Telegram bubble */
+      .tg-bubble {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        z-index: 60;
+      }
+      /* small hero overlay for contrast */
+      .hero-overlay {
+        background: linear-gradient(
+          180deg,
+          rgba(2, 6, 23, 0.35),
+          rgba(2, 6, 23, 0.35)
+        );
+      }
+      /* minimal accessible focus */
+      a:focus {
+        outline: 3px solid rgba(99, 102, 241, 0.25);
+        outline-offset: 3px;
+      }
+
+      /* ----- Carousel styles ----- */
+      .carousel-viewport {
+        overflow: hidden;
+        position: relative;
+      }
+      .carousel-track {
+        display: flex;
+        gap: 1rem;
+        transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: transform;
+      }
+      .card {
+        min-width: 240px;
+        max-width: 320px;
+        flex: 0 0 80%;
+      }
+      @media (min-width: 768px) {
+        .card {
+          flex: 0 0 calc(33.333% - 0.66rem);
+        }
+      }
+
+      /* small decorative image grid */
+      .img-grid img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 text-slate-900">
+    <!-- MAIN CONTAINER (we will swap views via JS) -->
+    <div id="app"></div>
+
+    <!-- Fixed Telegram bubble (always visible) -->
+    <a
+      class="tg-bubble"
+      id="fixed-tg"
+      href="https://t.me/Futttuuuredriveeee?text=Hi%20I%27m%20interested%20in%20the%20Typing%20Job!"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Chat on Telegram"
+    >
+      <div
+        class="w-14 h-14 rounded-full bg-gradient-to-br from-sky-500 to-emerald-400 flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-7 w-7 text-white"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
+          <path
+            d="M22 2L11 13"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M22 2l-7 20-3-9-9-3 19-8z"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
+    </a>
+
+    <script>
+      /******************************
+       * Simple SPA routing & render
+       * - Single file hosts two routes:
+       *   "/" -> landing
+       *   "/access-denied" -> access denied (light)
+       * - LocalStorage logic:
+       *   First visit => show landing & set visited flag
+       *   Subsequent visits => redirect to /access-denied
+       *
+       * Added:
+       * - Female success stories carousel (auto swipe)
+       * - Small image gallery section
+       ******************************/
+      const TELEGRAM_LINK =
+        "https://t.me/Futttuuuredriveeee?text=Hi%20I%27m%20interested%20in%20the%20Typing%20Job!";
+
+      // helper: create DOM from string
+      function htmlToNode(str) {
+        const template = document.createElement("template");
+        template.innerHTML = str.trim();
+        return template.content;
+      }
+
+      /* ---------------------------
+         UTIL: generate random earnings
+         multiples of 500 between 2000 and 12000
+         ---------------------------- */
+      function randomEarning() {
+        const min = 2000;
+        const max = 12000;
+        // number of steps of 500
+        const steps = Math.floor((max - min) / 500) + 1;
+        const value = min + Math.floor(Math.random() * steps) * 500;
+        return value;
+      }
+
+      // Pre-generate female success data
+      function generateFemaleStories(n = 9) {
+        const names = [
+          "Anjali R.",
+          "Priya S.",
+          "Neha M.",
+          "Kavya T.",
+          "Sana A.",
+          "Maya K.",
+          "Ritu P.",
+          "Tara N.",
+          "Lina B.",
+          "Isha V.",
+          "Poonam D.",
+        ];
+        const companies = [
+          "QuickType",
+          "DataHive",
+          "TypeWorks",
+          "InstaDocs",
+          "VerbaLabs",
+          "FastKeys",
+          "TextFlow",
+        ];
+        const stories = [];
+        for (let i = 0; i < n; i++) {
+          const name = names[i % names.length];
+          const company = companies[i % companies.length];
+          const earning = randomEarning();
+
+          // ✅ female-only avatars
+          const avatarIndex = 1 + (i % 90); // randomuser has women/0–99
+          const avatar = `https://randomuser.me/api/portraits/women/${avatarIndex}.jpg`;
+
+          stories.push({ name, earning, avatar });
+        }
+        return stories;
+      }
+
+      // landing page content (includes gallery and carousel placeholders)
+      function landingView() {
+        return `
+      <header class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-3">
+          <div class="bg-gradient-to-br from-sky-500 to-emerald-400 rounded-full w-10 h-10 flex items-center justify-center text-white font-bold">WF</div>
+          <span class="font-semibold text-lg">WorkFromHomeJobs</span>
+        </a>
+        <nav class="hidden sm:flex gap-6 items-center text-sm">
+          <a href="#how" class="hover:text-sky-600">How it works</a>
+          <a href="#testimonials" class="hover:text-sky-600">Testimonials</a>
+          <a href="#stories" class="hover:text-sky-600">Success</a>
+          <a href="#faq" class="hover:text-sky-600">FAQ</a>
+          <a href="${TELEGRAM_LINK}" target="_blank" class="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-xl shadow">💬 Chat on Telegram</a>
+        </nav>
+      </header>
+
+      <!-- hero -->
+      <section class="relative">
+        <div class="h-[68vh] sm:h-[74vh] bg-cover bg-center hero-overlay" style="background-image:url('https://img.freepik.com/free-photo/side-view-man-typing-laptop-keypad-with-cup-coffee-desk_23-2147955397.jpg?semt=ais_hybrid&w=740&q=80')">
+         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent backdrop-blur-[1px]"></div>
+          <div class="relative max-w-6xl mx-auto px-6 h-full flex items-center">
+            <div class="w-full md:w-2/3 lg:w-1/2 text-white">
+              <p class="inline-block text-sm uppercase tracking-wider bg-white/10 px-3 py-1 rounded-full">Work from home • Typing jobs</p>
+              <h1 class="mt-6 text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight">Start Today & Earn Money From Home</h1>
+              <p class="mt-4 text-lg sm:text-xl max-w-xl">Simple typing tasks • No experience required • Flexible hours • Get your first payout quickly — chat with the team on Telegram to begin.</p>
+
+              <div class="mt-6 flex flex-wrap gap-3">
+                <a href="${TELEGRAM_LINK}" target="_blank" class="inline-flex items-center gap-3 bg-gradient-to-r from-sky-500 to-emerald-400 text-white px-5 py-3 rounded-2xl font-semibold shadow">💬 Chat on Telegram</a>
+                <a href="${TELEGRAM_LINK}" target="_blank" class="inline-flex items-center gap-2 border border-white/40 text-white px-4 py-3 rounded-2xl font-medium">⚡ Start Now</a>
+                <a href="${TELEGRAM_LINK}" target="_blank" class="inline-flex items-center gap-2 bg-white/10 text-white px-4 py-3 rounded-2xl font-medium">📋 Apply Instantly</a>
+              </div>
+
+              <p class="mt-4 text-sm text-white/80">Trusted by thousands across India • <strong>5,000+ people started this week</strong></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- benefits -->
+      <section class="max-w-6xl mx-auto px-6 py-10">
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="bg-white rounded-2xl p-6 shadow-sm">
+            <div class="text-2xl">🕒</div>
+            <h3 class="mt-4 font-semibold">Flexible Hours</h3>
+            <p class="mt-2 text-sm text-slate-600">Choose your working time — evenings, mornings, or weekends.</p>
+            <div class="mt-4"><a href="${TELEGRAM_LINK}" target="_blank" class="text-sky-600 text-sm font-medium">Chat to apply →</a></div>
+          </div>
+          <div class="bg-white rounded-2xl p-6 shadow-sm">
+            <div class="text-2xl">💰</div>
+            <h3 class="mt-4 font-semibold">Daily Payouts</h3>
+            <p class="mt-2 text-sm text-slate-600">Reliable payments via UPI or bank transfer — team will confirm on Telegram.</p>
+            <div class="mt-4"><a href="${TELEGRAM_LINK}" target="_blank" class="text-sky-600 text-sm font-medium">Chat to apply →</a></div>
+          </div>
+          <div class="bg-white rounded-2xl p-6 shadow-sm">
+            <div class="text-2xl">🧑‍💻</div>
+            <h3 class="mt-4 font-semibold">No Experience Needed</h3>
+            <p class="mt-2 text-sm text-slate-600">Basic typing speed is enough. Quick onboarding via Telegram.</p>
+            <div class="mt-4"><a href="${TELEGRAM_LINK}" target="_blank" class="text-sky-600 text-sm font-medium">Chat to apply →</a></div>
+          </div>
+          <div class="bg-white rounded-2xl p-6 shadow-sm">
+            <div class="text-2xl">🌍</div>
+            <h3 class="mt-4 font-semibold">100% Remote</h3>
+            <p class="mt-2 text-sm text-slate-600">Work from anywhere — your home, a cafe, or college hostel.</p>
+            <div class="mt-4"><a href="${TELEGRAM_LINK}" target="_blank" class="text-sky-600 text-sm font-medium">Chat to apply →</a></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- how it works -->
+      <section id="how" class="bg-white/60 py-10">
+        <div class="max-w-5xl mx-auto px-6">
+          <h2 class="text-2xl font-semibold">How it works</h2>
+          <p class="mt-2 text-sm text-slate-600">Three simple steps — click chat, send the message, receive tasks & earn.</p>
+
+          <div class="mt-6 grid gap-6 sm:grid-cols-3">
+            <div class="bg-slate-50 p-5 rounded-2xl">
+              <div class="text-xl font-semibold">1. Click Chat</div>
+              <p class="mt-2 text-sm text-slate-600">Tap the Telegram button to open the team's chat with a message filled in.</p>
+            </div>
+            <div class="bg-slate-50 p-5 rounded-2xl">
+              <div class="text-xl font-semibold">2. Send Message</div>
+              <p class="mt-2 text-sm text-slate-600">Introduce yourself and confirm availability — the team replies fast.</p>
+            </div>
+            <div class="bg-slate-50 p-5 rounded-2xl">
+              <div class="text-xl font-semibold">3. Start & Earn</div>
+              <p class="mt-2 text-sm text-slate-600">You receive tasks and payment details on Telegram. Begin working immediately.</p>
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <a href="${TELEGRAM_LINK}" target="_blank" class="inline-flex items-center gap-3 bg-gradient-to-r from-sky-500 to-emerald-400 text-white px-5 py-3 rounded-2xl font-semibold shadow">💬 Chat on Telegram</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- testimonials -->
+      <section id="testimonials" class="max-w-6xl mx-auto px-6 py-10">
+        <h2 class="text-2xl font-semibold">What people say</h2>
+        <p class="mt-2 text-sm text-slate-600">Real testimonials increase trust — replace these placeholders with verified reviews later.</p>
+
+        <div class="mt-6 grid gap-6 md:grid-cols-3">
+          <div class="bg-gradient-to-tr from-white to-slate-50 p-6 rounded-2xl shadow">
+            <div class="flex items-center gap-4">
+              <img src="https://i.pravatar.cc/64?img=12" class="w-12 h-12 rounded-full" alt="">
+              <div>
+                <div class="font-semibold">Aman K.</div>
+                <div class="text-sm text-slate-500">Lucknow, UP</div>
+              </div>
+            </div>
+            <p class="mt-4 text-slate-600">"Started last month — tasks are simple and I got my first payout within 10 days. Team responded quickly on Telegram."</p>
+          </div>
+
+          <div class="bg-gradient-to-tr from-white to-slate-50 p-6 rounded-2xl shadow">
+            <div class="flex items-center gap-4">
+              <img src="https://i.pravatar.cc/64?img=24" class="w-12 h-12 rounded-full" alt="">
+              <div>
+                <div class="font-semibold">Saira P.</div>
+                <div class="text-sm text-slate-500">Hyderabad, Telangana</div>
+              </div>
+            </div>
+            <p class="mt-4 text-slate-600">"Great for students — small tasks in the evening earn pocket money every week."</p>
+          </div>
+
+          <div class="bg-gradient-to-tr from-white to-slate-50 p-6 rounded-2xl shadow">
+            <div class="flex items-center gap-4">
+              <img src="https://i.pravatar.cc/64?img=32" class="w-12 h-12 rounded-full" alt="">
+              <div>
+                <div class="font-semibold">Kriti S.</div>
+                <div class="text-sm text-slate-500">Pune, Maharashtra</div>
+              </div>
+            </div>
+            <p class="mt-4 text-slate-600">"No complicated forms — just chat and start. Payments were as promised."</p>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <a href="${TELEGRAM_LINK}" target="_blank" class="inline-flex items-center gap-3 bg-sky-600 text-white px-5 py-3 rounded-2xl font-semibold shadow">💬 Chat on Telegram</a>
+        </div>
+      </section>
+
+      <!-- SUCCESS STORIES (female carousel) -->
+      <section id="stories" class="max-w-6xl mx-auto px-6 py-12">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-2xl font-semibold">Success Stories</h2>
+            <p class="mt-2 text-sm text-slate-600">Real applicants who started small and earned from home — updated earnings.</p>
+          </div>
+          <div class="text-sm text-slate-500">• Showing live updates</div>
+        </div>
+
+        <div class="mt-6 carousel-viewport">
+          <div id="carousel-track" class="carousel-track">
+            <!-- cards injected by JS -->
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <a href="${TELEGRAM_LINK}" target="_blank" class="inline-flex items-center gap-3 bg-gradient-to-r from-sky-500 to-emerald-400 text-white px-5 py-3 rounded-2xl font-semibold shadow">💬 Chat on Telegram</a>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq" class="max-w-6xl mx-auto px-6 py-10">
+        <h2 class="text-2xl font-semibold">Frequently asked questions</h2>
+        <div class="mt-5 space-y-4">
+          <details class="bg-white p-4 rounded-2xl shadow-sm">
+            <summary class="font-medium cursor-pointer">Do I need prior experience?</summary>
+            <div class="mt-2 text-sm text-slate-600">No — basic typing skills are enough. Team provides onboarding and clear instructions via Telegram.</div>
+          </details>
+
+          <details class="bg-white p-4 rounded-2xl shadow-sm">
+            <summary class="font-medium cursor-pointer">How do I get paid?</summary>
+            <div class="mt-2 text-sm text-slate-600">Payment methods vary — many use UPI or bank transfers. Team shares payment details on Telegram.</div>
+          </details>
+
+          <details class="bg-white p-4 rounded-2xl shadow-sm">
+            <summary class="font-medium cursor-pointer">How soon will I get tasks?</summary>
+            <div class="mt-2 text-sm text-slate-600">Active applicants usually receive tasks within 24 hours; response time depends on team availability.</div>
+          </details>
+        </div>
+
+        <div class="mt-6">
+          <a href="${TELEGRAM_LINK}" target="_blank" class="inline-flex items-center gap-3 bg-gradient-to-r from-sky-500 to-emerald-400 text-white px-5 py-3 rounded-2xl font-semibold shadow">💬 Chat on Telegram</a>
+        </div>
+      </section>
+
+      <!-- footer -->
+      <footer class="bg-white border-t border-slate-100 py-6">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div class="text-sm text-slate-600">© ${new Date().getFullYear()} WorkFromHomeJobs. All rights reserved.</div>
+          <div class="flex gap-4 items-center text-sm">
+            <a href="#" class="hover:text-sky-600">Privacy</a>
+            <a href="#" class="hover:text-sky-600">Terms</a>
+            <a href="${TELEGRAM_LINK}" target="_blank" class="inline-flex items-center gap-2 bg-sky-600 text-white px-3 py-2 rounded-lg">💬 Chat on Telegram</a>
+          </div>
+        </div>
+      </footer>
+      `;
+      }
+
+      // access denied view (light theme)
+      function accessDeniedView() {
+        return `
+      <div class="min-h-screen flex items-center justify-center bg-white">
+        <div class="max-w-xl text-center px-6 py-12">
+          <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-50 mx-auto">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v4m0 4h.01"/>
+            </svg>
+          </div>
+
+          <h1 class="mt-6 text-2xl font-semibold text-slate-900">Access Denied – Duplicate Session</h1>
+          <p class="mt-4 text-slate-600">Our system detected a repeated attempt to open this page. Each applicant link can be accessed only once to ensure authenticity. Please proceed to the official Telegram chat for further instructions.</p>
+
+          <div class="mt-6 flex items-center justify-center gap-4">
+            <a href="${TELEGRAM_LINK}" target="_blank" class="inline-flex items-center gap-3 bg-gradient-to-r from-sky-500 to-emerald-400 text-white px-5 py-3 rounded-2xl font-semibold shadow">💬 Go to Telegram</a>
+          </div>
+        </div>
+      </div>
+      `;
+      }
+
+      // render function
+      function renderRoute() {
+        const path = window.location.pathname || "/";
+        const app = document.getElementById("app");
+        app.innerHTML = "";
+        if (path === "/access-denied") {
+          app.appendChild(htmlToNode(accessDeniedView()));
+        } else {
+          app.appendChild(htmlToNode(landingView()));
+        }
+        // after injecting, add small reveal for elements
+        document
+          .querySelectorAll(".reveal")
+          .forEach((el) => setTimeout(() => el.classList.add("show"), 80));
+
+        // init carousel after render (if on landing view)
+        if (path !== "/access-denied") {
+          initFemaleCarousel();
+        }
+      }
+
+      /* ---------------------------
+         FEMALE CAROUSEL IMPLEMENTATION
+         - generates cards from data
+         - auto-advance with wrap
+         ---------------------------- */
+      let carouselData = [];
+      let carouselIndex = 0;
+      let carouselTimer = null;
+
+      function createCardHTML(item) {
+        // round display with commas
+        const earningStr = item.earning.toLocaleString("en-IN");
+        return `
+        <div class="card bg-white rounded-2xl p-5 shadow">
+          <div class="flex items-center gap-4">
+            <img src="${item.avatar}" alt="${item.name}" class="w-14 h-14 rounded-full object-cover">
+            <div>
+              <div class="font-semibold">${item.name}</div>
+            </div>
+            <div class="ml-auto text-sm text-slate-500">Recent</div>
+          </div>
+          <div class="mt-4">
+            <div class="text-sm text-slate-500">Earnings</div>
+            <div class="mt-1 text-2xl font-bold">₹ ${earningStr}</div>
+            <div class="mt-2 text-xs text-slate-400">This week</div>
+          </div>
+        </div>
+        `;
+      }
+
+      function initFemaleCarousel() {
+        // generate data once
+        carouselData = generateFemaleStories(9);
+        // inject initial cards (duplicate some items for smooth wrap)
+        const track = document.getElementById("carousel-track");
+        if (!track) return;
+        track.innerHTML = "";
+
+        // To ensure smooth wrapping, we'll render all cards (many) — track flex will handle overflow
+        carouselData.forEach((item) => {
+          track.appendChild(htmlToNode(createCardHTML(item)));
+        });
+        // duplicate again for slider to wrap visually (optional)
+        carouselData.forEach((item) => {
+          track.appendChild(htmlToNode(createCardHTML(item)));
+        });
+
+        // autoplay
+        carouselIndex = 0;
+        const cardEl = track.querySelector(".card");
+        if (!cardEl) return;
+        const gap = 16; // px gap is 1rem default in CSS; using dynamic transform only
+        const cardWidth = cardEl.getBoundingClientRect().width + gap;
+
+        // function to move track
+        function moveToIndex(i) {
+          track.style.transform = `translateX(-${i * cardWidth}px)`;
+        }
+
+        // start auto advance
+        if (carouselTimer) clearInterval(carouselTimer);
+        carouselTimer = setInterval(() => {
+          carouselIndex++;
+          // wrap: when index reaches original length, reset quickly so duplicated cards create loop illusion
+          const maxIndex = carouselData.length;
+          if (carouselIndex > maxIndex) {
+            // jump back to start without animation
+            track.style.transition = "none";
+            carouselIndex = 0;
+            moveToIndex(carouselIndex);
+            // force reflow then enable transition back
+            // eslint-disable-next-line no-unused-expressions
+            track.offsetHeight;
+            track.style.transition =
+              "transform 600ms cubic-bezier(0.22, 1, 0.36, 1)";
+            carouselIndex++;
+            moveToIndex(carouselIndex);
+          } else {
+            moveToIndex(carouselIndex);
+          }
+        }, 2500);
+
+        // resize handler to recalc cardWidth
+        let resizeTimer;
+        window.addEventListener("resize", () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(() => {
+            // recalc and move to current index to keep alignment
+            const cw =
+              track.querySelector(".card").getBoundingClientRect().width + gap;
+            track.style.transform = `translateX(-${carouselIndex * cw}px)`;
+          }, 150);
+        });
+      }
+
+      /* ---------------------------
+         END FEMALE CAROUSEL
+         ---------------------------- */
+
+      // initial visit handling
+      (function init() {
+        const visited = localStorage.getItem("landingVisited");
+        const pathname = window.location.pathname || "/";
+
+        if (!visited) {
+          // First time: show landing and set visited
+          localStorage.setItem("landingVisited", "1");
+          // ensure URL is '/'
+          try {
+            if (pathname !== "/") history.replaceState({}, "", "/");
+          } catch (e) {
+            // ignore history errors (file:// testing)
+          }
+          renderRoute();
+          return;
+        }
+
+        // visited before
+        if (pathname === "/access-denied") {
+          // user intentionally on access-denied (OK)
+          renderRoute();
+          return;
+        }
+
+        // visited before and not on /access-denied -> redirect to /access-denied route
+        try {
+          history.replaceState({}, "", "/access-denied");
+        } catch (e) {
+          // ignore history errors on file://
+        }
+        renderRoute();
+      })();
+
+      // basic SPA navigation (handle back/forward)
+      window.addEventListener("popstate", () => {
+        renderRoute();
+      });
+
+      // make fixed telegram bubble open in new tab (target already set) and accessible
+      document.getElementById("fixed-tg").addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          window.open(TELEGRAM_LINK, "_blank");
+        }
+      });
+    </script>
+  </body>
+</html>
