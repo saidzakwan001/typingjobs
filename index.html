@@ -577,16 +577,26 @@
         // autoplay
         carouselIndex = 0;
         const cardEl = track.querySelector(".card");
-        if (!cardEl) return;
-        const gap = 16; // px gap is 1rem default in CSS; using dynamic transform only
-        const viewport = document.querySelector(".carousel-viewport");
-const cardWidth = Math.min(cardEl.getBoundingClientRect().width + gap, viewport.offsetWidth * 0.9);
+if (!cardEl) return;
 
-        // function to move track
-        function moveToIndex(i) {
-          track.style.transform = `translateX(-${i * cardWidth}px)`;
-        }
+// 👇 We'll use the visible width instead of pure card width
+const viewport = document.querySelector(".carousel-viewport");
+const gap = 16;
+const cardWidth = cardEl.getBoundingClientRect().width + gap;
+const viewportWidth = viewport.offsetWidth;
 
+// Helper: calculate how far to move so each card aligns flush to left
+function moveToIndex(i) {
+  const totalCards = track.children.length;
+  const visibleCards = Math.floor(viewportWidth / cardWidth);
+  const offset = i * cardWidth;
+
+  // ✅ Clamp offset so it never moves too far
+  const maxOffset = (totalCards - visibleCards) * cardWidth;
+  const translate = Math.min(offset, maxOffset);
+  track.style.transform = `translateX(-${translate}px)`;
+}
+        
         // start auto advance
         if (carouselTimer) clearInterval(carouselTimer);
         carouselTimer = setInterval(() => {
@@ -675,4 +685,5 @@ const cardWidth = Math.min(cardEl.getBoundingClientRect().width + gap, viewport.
     </script>
   </body>
 </html>
+
 
