@@ -315,9 +315,13 @@ src="https://www.facebook.com/tr?id=854025040357144&ev=PageView&noscript=1"
             class="inline-flex items-center justify-center gap-3 bg-gradient-to-r from-sky-500 to-emerald-400 text-white px-5 py-3 rounded-2xl font-semibold shadow hover:scale-[1.03] transition-transform"
           >💬 Chat on Telegram</a>
 
-          <a href="/signup"
-  class="inline-flex items-center justify-center gap-3 bg-amber-500 text-white px-5 py-3 rounded-2xl font-semibold shadow hover:scale-[1.03] transition-transform"
->🚀 Sign Up Today</a>
+          <a href="${TELEGRAM_LINK}" target="_blank"
+            class="inline-flex items-center justify-center gap-2 border border-white/40 text-white px-4 py-3 rounded-2xl font-medium hover:bg-white/10 transition"
+          >⚡ Start Now</a>
+
+          <a href="${TELEGRAM_LINK}" target="_blank"
+            class="inline-flex items-center justify-center gap-2 bg-white/10 text-white px-4 py-3 rounded-2xl font-medium hover:bg-white/20 transition"
+          >📋 Apply Instantly</a>
         </div>
 
         <p class="mt-4 text-xs sm:text-sm text-white/80">
@@ -532,49 +536,7 @@ src="https://www.facebook.com/tr?id=854025040357144&ev=PageView&noscript=1"
         if (path !== "/access-denied") {
           initFemaleCarousel();
         }
-        
-        if (path === "/signup") {
-  app.appendChild(htmlToNode(signupView()));
-  setupSignupHandler();
-  return;
-}
-
-if (path === "/login") {
-  app.appendChild(htmlToNode(loginView()));
-  return;
-}
-
       }
-
-      function setupSignupHandler() {
-  const form = document.querySelector("#signupForm");
-  const msg = document.querySelector("#signupMsg");
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const name = document.querySelector("#name").value.trim();
-    const email = document.querySelector("#email").value.trim();
-    const pass = document.querySelector("#password").value;
-    const confirm = document.querySelector("#confirm").value;
-
-    if (!name || !email || !pass || !confirm) {
-      alert("Please fill all fields");
-      return;
-    }
-    if (pass !== confirm) {
-      alert("Passwords do not match");
-      return;
-    }
-
-    msg.classList.remove("hidden");
-
-    setTimeout(() => {
-      history.pushState({}, "", "/login");
-      renderRoute();
-    }, 1500);
-  });
-}
 
       /* ---------------------------
          FEMALE CAROUSEL IMPLEMENTATION
@@ -737,115 +699,10 @@ document.getElementById("fixed-wa").addEventListener("keydown", (e) => {
     );
   }
 });
-function signupView() {
-  return `
-  <div class="min-h-screen flex items-center justify-center bg-white">
-    <div class="w-full max-w-md bg-slate-50 rounded-2xl shadow p-6">
-      <h2 class="text-xl font-semibold text-center mb-4">Create Your Account</h2>
-
-      <form id="signupForm" class="space-y-4">
-        <input type="text" id="name" placeholder="Full Name" class="w-full border px-3 py-2 rounded" required />
-        <input type="email" id="email" placeholder="Email" class="w-full border px-3 py-2 rounded" required />
-        <input type="password" id="password" placeholder="Password" class="w-full border px-3 py-2 rounded" required />
-        <input type="password" id="confirm" placeholder="Confirm Password" class="w-full border px-3 py-2 rounded" required />
-
-        <button class="w-full bg-rose-600 text-white py-3 rounded-xl shadow hover:scale-105 transition">
-          Sign Up
-        </button>
-      </form>
-
-      <p id="signupMsg" class="mt-4 text-center text-green-600 font-medium hidden">
-        🎉 Signup successful! Redirecting…
-      </p>
-    </div>
-  </div>
-  `;
-}
-
-function loginView() {
-  return `
-  <div class="min-h-screen flex items-center justify-center bg-white">
-    <div class="w-full max-w-md bg-slate-50 rounded-2xl shadow p-6 text-center">
-      <h2 class="text-xl font-semibold mb-4">Login Required</h2>
-      <p class="text-slate-600">To gain access and login to the platform you've to pay registration fees:</p>
-      <h3 class="text-3xl font-bold text-rose-600 mt-4">₹499</h3>
-    </div>
-  </div>
-  `;
-}
-
-// EXTEND ROUTING
-function renderRouteUpdated() {
-  const path = window.location.pathname || "/";
-  const app = document.getElementById("app");
-  app.innerHTML = "";
-
-  if (path === "/signup") {
-    app.appendChild(htmlToNode(signupView()));
-    attachSignupHandler();
-    return;
-  }
-
-  if (path === "/login") {
-    app.appendChild(htmlToNode(loginView()));
-    return;
-  }
-
-  // default fallback → original router
-  renderRoute();
-}
-
-window.renderRoute = renderRouteUpdated;
-
-
-// Handle Signup
-function attachSignupHandler() {
-  const btn = document.getElementById("signupBtn");
-  const msg = document.getElementById("msg");
-
-  btn.addEventListener("click", () => {
-    const name = document.getElementById("name")?.value.trim();
-    const email = document.getElementById("email")?.value.trim();
-    const pass = document.getElementById("password")?.value.trim();
-    const confirmPass = document.getElementById("confirmPassword")?.value.trim();
-
-    if (!name || !email || !pass || !confirmPass) {
-      msg.textContent = "⚠ Please fill all fields."; 
-      msg.style.color = "red";
-      return;
-    }
-    if (pass !== confirmPass) {
-      msg.textContent = "⚠ Passwords do not match!";
-      msg.style.color = "red";
-      return;
-    }
-
-    // store signup (fake DB)
-    localStorage.setItem("user", JSON.stringify({ name, email }));
-
-    msg.textContent = "✅ Account created successfully! Redirecting...";
-    msg.style.color = "green";
-
-    setTimeout(() => {
-      history.pushState({}, "", "/login");
-      renderRouteUpdated();
-    }, 1200);
-  });
-}
-
-
-// Override initial load
-(() => {
-  renderRouteUpdated();
-})();
-
 
     </script>
   </body>
 </html>
-
-
-
 
 
 
