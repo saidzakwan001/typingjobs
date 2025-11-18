@@ -315,13 +315,9 @@ src="https://www.facebook.com/tr?id=854025040357144&ev=PageView&noscript=1"
             class="inline-flex items-center justify-center gap-3 bg-gradient-to-r from-sky-500 to-emerald-400 text-white px-5 py-3 rounded-2xl font-semibold shadow hover:scale-[1.03] transition-transform"
           >💬 Chat on Telegram</a>
 
-          <a href="${TELEGRAM_LINK}" target="_blank"
-            class="inline-flex items-center justify-center gap-2 border border-white/40 text-white px-4 py-3 rounded-2xl font-medium hover:bg-white/10 transition"
-          >⚡ Start Now</a>
-
-          <a href="${TELEGRAM_LINK}" target="_blank"
-            class="inline-flex items-center justify-center gap-2 bg-white/10 text-white px-4 py-3 rounded-2xl font-medium hover:bg-white/20 transition"
-          >📋 Apply Instantly</a>
+          <a href="/signup"
+  class="inline-flex items-center justify-center gap-3 bg-amber-500 text-white px-5 py-3 rounded-2xl font-semibold shadow hover:scale-[1.03] transition-transform"
+>🚀 Sign Up Today</a>
         </div>
 
         <p class="mt-4 text-xs sm:text-sm text-white/80">
@@ -700,9 +696,122 @@ document.getElementById("fixed-wa").addEventListener("keydown", (e) => {
   }
 });
 
+      /* ------------------------------------------
+   MINI AUTH SYSTEM (Signup + Login Views)
+-------------------------------------------*/
+
+function signupView() {
+  return `
+  <div class="min-h-screen flex items-center justify-center bg-white px-6">
+    <div class="max-w-md w-full bg-white shadow-lg rounded-2xl p-6">
+      <h2 class="text-2xl font-bold mb-4 text-center">Create Account</h2>
+
+      <div class="space-y-4">
+        <input id="name" type="text" placeholder="Full Name" class="w-full border rounded-lg px-4 py-2" />
+        <input id="email" type="email" placeholder="Email" class="w-full border rounded-lg px-4 py-2" />
+        <input id="password" type="password" placeholder="Password" class="w-full border rounded-lg px-4 py-2" />
+        <input id="confirmPassword" type="password" placeholder="Confirm Password" class="w-full border rounded-lg px-4 py-2" />
+      </div>
+
+      <button id="signupBtn" class="w-full bg-emerald-500 text-white mt-5 py-3 rounded-lg text-lg font-semibold hover:bg-emerald-600 transition">Sign Up</button>
+      
+      <p id="msg" class="mt-4 text-center text-sm text-slate-600"></p>
+
+      <p class="mt-4 text-center text-sm">
+        Already have an account? <a href="/login" class="text-blue-600 underline">Login</a>
+      </p>
+    </div>
+  </div>
+  `;
+}
+
+function loginView() {
+  return `
+  <div class="min-h-screen flex items-center justify-center bg-white px-6">
+    <div class="max-w-md w-full bg-white shadow-lg rounded-2xl p-6">
+      <h2 class="text-2xl font-bold mb-3 text-center">Login</h2>
+
+      <p class="text-center text-red-600 text-sm font-semibold mb-4">
+        To gain access and login to the platform you've to pay registration fees ₹499.
+      </p>
+
+      <button onclick="window.location.href='/'" class="w-full bg-sky-600 text-white py-3 rounded-lg text-lg font-semibold hover:bg-sky-700 transition">Go Back</button>
+    </div>
+  </div>
+  `;
+}
+
+
+// EXTEND ROUTING
+function renderRouteUpdated() {
+  const path = window.location.pathname || "/";
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+
+  if (path === "/signup") {
+    app.appendChild(htmlToNode(signupView()));
+    attachSignupHandler();
+    return;
+  }
+
+  if (path === "/login") {
+    app.appendChild(htmlToNode(loginView()));
+    return;
+  }
+
+  // default fallback → original router
+  renderRoute();
+}
+
+window.renderRoute = renderRouteUpdated;
+
+
+// Handle Signup
+function attachSignupHandler() {
+  const btn = document.getElementById("signupBtn");
+  const msg = document.getElementById("msg");
+
+  btn.addEventListener("click", () => {
+    const name = document.getElementById("name")?.value.trim();
+    const email = document.getElementById("email")?.value.trim();
+    const pass = document.getElementById("password")?.value.trim();
+    const confirmPass = document.getElementById("confirmPassword")?.value.trim();
+
+    if (!name || !email || !pass || !confirmPass) {
+      msg.textContent = "⚠ Please fill all fields."; 
+      msg.style.color = "red";
+      return;
+    }
+    if (pass !== confirmPass) {
+      msg.textContent = "⚠ Passwords do not match!";
+      msg.style.color = "red";
+      return;
+    }
+
+    // store signup (fake DB)
+    localStorage.setItem("user", JSON.stringify({ name, email }));
+
+    msg.textContent = "✅ Account created successfully! Redirecting...";
+    msg.style.color = "green";
+
+    setTimeout(() => {
+      history.pushState({}, "", "/login");
+      renderRouteUpdated();
+    }, 1200);
+  });
+}
+
+
+// Override initial load
+(() => {
+  renderRouteUpdated();
+})();
+
+
     </script>
   </body>
 </html>
+
 
 
 
