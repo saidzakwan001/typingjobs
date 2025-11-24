@@ -225,6 +225,8 @@
        ******************************/
       const TELEGRAM_LINK =
         "https://t.me/Futttuuuredriveeee?text=Hi%20I%27m%20interested%20in%20the%20Typing%20Job!";
+      const LOGIN_TELEGRAM_LINK =
+        "https://t.me/Futttuuuredriveeee?text=Hi%20I%27m%20ready%20to%20pay%20the%20registration%20fees%20of%20₹499%20to%20login.";
       const SAFE_ROUTES = new Set(["/access-denied", "/signup", "/login"]);
       const MAX_VISITS = 3;
       const VISIT_COUNT_KEY = "wf_visit_count";
@@ -585,7 +587,7 @@
           <h1 class="text-2xl font-semibold text-slate-900">Almost there</h1>
           <p class="text-sm text-slate-600">To gain access to login to the platform you have to pay registration fees of ₹499.</p>
           <div class="space-y-3">
-            <a href="${TELEGRAM_LINK}" target="_blank" class="block w-full bg-gradient-to-r from-sky-500 to-emerald-400 text-white rounded-2xl py-3 font-semibold">Pay &amp; chat on Telegram</a>
+            <a href="${LOGIN_TELEGRAM_LINK}" target="_blank" class="block w-full bg-gradient-to-r from-sky-500 to-emerald-400 text-white rounded-2xl py-3 font-semibold">Pay &amp; chat on Telegram</a>
             <a href="/" data-route="/" class="block w-full border border-slate-200 rounded-2xl py-3 font-medium text-slate-700 hover:bg-slate-50">← Back to main page</a>
           </div>
         </div>
@@ -880,4 +882,5 @@
     </script>
   </body>
 </html>
+
 
